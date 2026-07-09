@@ -16,6 +16,6 @@ CREATE TABLE IF NOT EXISTS orders (
 	customer_id INT REFERENCES customer(customer_id),
 	product_id INT REFERENCES product(product_id),
 	order_date DATE DEFAULT CURRENT_DATE
-	)
+	);
 
 -- test run
