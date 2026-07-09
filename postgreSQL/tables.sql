@@ -17,3 +17,4 @@ CREATE TABLE IF NOT EXISTS orders (
 	product_id INT REFERENCES product(product_id),
 	order_date DATE DEFAULT CURRENT_DATE
 	)
+-- test run
