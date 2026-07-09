@@ -1,0 +1,32 @@
+name: Database-automation-workflow
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'postgreSQL/tables.sql'
+
+jobs:
+  ssh-and-migrate-job:
+    runs-on: ubuntu-latest
+    steps:
+    
+  
+    - name: "pull-code-from-github"
+      uses: actions/checkout@v4
+
+    
+    - name: "connect-to-ec2-via-ssh"
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.EC2_PUBLIC_IP }}       
+        username: ubuntu                          
+        key: ${{ secrets.EC2_PRIVATE_KEY }}      
+        script: |
+          
+          cd ~/postgresQL && git pull origin main
+    
+          kubectl exec -i postgres-db-0 -n postgresql -- psql -U customeruser -d customerdb 
+          
+          
