@@ -1,0 +1,18 @@
+replicaCount: 1
+
+image:
+  repository: postgres
+  tag: "15"
+  pullPolicy: IfNotPresent
+
+postgres:
+  db: postgres_db
+  user: db_admin
+  password: dbpassword
+  storage:
+    size: 10Gi
+    storageClass: standard
+
+service:
+  type: LoadBalancer
+  port: 5432

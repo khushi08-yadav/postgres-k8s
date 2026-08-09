@@ -1,0 +1,75 @@
+apiVersion: batch/v1
+kind: Job
+
+metadata:
+  name: postgres-migration
+  namespace: postgresql
+
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+
+spec:
+  backoffLimit: 5
+
+  template:
+    metadata:
+      labels:
+        app: postgres-migration
+
+  spec:
+    restartPolicy: OnFailure
+
+    containers:
+      - name: migration
+        image: postgres:16
+
+        env:
+          - name: PGHOST
+            value: postgres-service
+
+          - name: PGPORT
+            value: "5432"
+
+          - name: PGDATABASE
+            value: {{ .Values.postgres.db | quote }}
+
+          - name: PGUSER
+            value: {{ .Values.postgres.user | quote }}
+
+          - name: PGPASSWORD
+            value: {{ .Value.postgres.password | quote }}
+
+        command:
+          - sh
+          - -c
+          - |
+            echo "Waiting for PostgreSQL.."
+
+            until pg_isready -h "$PGHOST" -p "$PGPORT" -U "$PGUSER"; do
+              sleep 3
+            done
+
+            echo "PostgreSQL is ready"
+
+            echo "Running database migration..."
+
+            psql -f /migration/init.sql
+
+            echo "Migration completed successfully"
+
+        volumeMounts:
+          - name: migration-sql
+            mountPath: /migrations
+
+    volumes:
+      - name: migration-sql
+        configMap:
+          name: postgres-init-sql
+
+
+
+
+
+
+          ii
