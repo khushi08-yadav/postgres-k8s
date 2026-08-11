@@ -8,9 +8,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/khushi08-yadav/postgres-k8si.git'
+    repoURL: 'https://github.com/khushi08-yadav/postgres-k8s.git'
     targetRevision: HEAD
-    path: postgres-gitops
+    path: '.'
 
   destination:
     server: 'https://default.svc'
