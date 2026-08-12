@@ -41,18 +41,19 @@ spec:
             - name: init-scripts
               mountPath: /docker-entrypoint-initdb.d
 
-       volumes:
-          - name: init-scripts
-            configMap:
-              name: postgres-init-sql
+      volumes:
+        - name: init-scripts
+          configMap:
+            name: postgres-init-sql
 
-    volumeClaimTemplates:
-      - metadata:
-          name: postgres-data
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-data
 
-        spec:
-          accessModes: [ "ReadWriteOnce" ]
+      spec:
+        accessModes:
+          - ReadWriteOnce
 
-          resources:
-            requests:
-              storage: 5Gi 
+        resources:
+          requests:
+            storage: 5Gi
