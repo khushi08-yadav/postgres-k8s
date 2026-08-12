@@ -41,7 +41,7 @@ spec:
             - name: init-scripts
               mountPath: /docker-entrypoint-initdb.d
 
-        volumes:
+       volumes:
           - name: init-scripts
             configMap:
               name: postgres-init-sql
