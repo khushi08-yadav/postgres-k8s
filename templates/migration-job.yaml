@@ -38,7 +38,7 @@ spec:
             value: {{ .Values.postgres.user | quote }}
 
           - name: PGPASSWORD
-            value: {{ .Value.postgres.password | quote }}
+            value: {{ .Values.postgres.password | quote }}
 
         command:
           - sh
