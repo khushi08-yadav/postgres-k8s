@@ -2,12 +2,12 @@ apiVersion: apps/v1
 kind: StatefulSet
 
 metadata:
-  name: "postgres-db"
+  name: postgres-db
   namespace: postgresql
 
 spec:
-  serviceName: "postgres-service"
-  replicas: 1
+  serviceName: postgres-service
+  replicas: {{ .Values.replicaCount }}
 
   selector:
     matchLabels:
@@ -21,13 +21,16 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: postgres:16
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
 
           env:
             - name: POSTGRES_DB
               value: {{ .Values.postgres.db | quote }}
+
             - name: POSTGRES_USER
               value: {{ .Values.postgres.user | quote }}
+
             - name: POSTGRES_PASSWORD
               value: {{ .Values.postgres.password | quote }}
 
@@ -38,6 +41,7 @@ spec:
           volumeMounts:
             - name: postgres-data
               mountPath: /var/lib/postgresql/data
+
             - name: init-scripts
               mountPath: /docker-entrypoint-initdb.d
 
@@ -56,4 +60,6 @@ spec:
 
         resources:
           requests:
-            storage: 5Gi
+            storage: {{ .Values.postgres.storage.size }}
+
+        storageClassName: {{ .Values.postgres.storage.storageClass }}
