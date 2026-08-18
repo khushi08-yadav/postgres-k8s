@@ -17,59 +17,52 @@ spec:
       labels:
         app: postgres-migration
 
-  spec:
-    restartPolicy: OnFailure
+    spec:
+      restartPolicy: OnFailure
 
-    containers:
-      - name: migration
-        image: postgres:16
+      containers:
+        - name: migration
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
 
-        env:
-          - name: PGHOST
-            value: postgres-service
+          env:
+            - name: PGHOST
+              value: postgres-service
 
-          - name: PGPORT
-            value: "5432"
+            - name: PGPORT
+              value: "5432"
 
-          - name: PGDATABASE
-            value: {{ .Values.postgres.db | quote }}
+            - name: PGDATABASE
+              value: {{ .Values.postgres.db | quote }}
 
-          - name: PGUSER
-            value: {{ .Values.postgres.user | quote }}
+            - name: PGUSER
+              value: {{ .Values.postgres.user | quote }}
 
-          - name: PGPASSWORD
-            value: {{ .Values.postgres.password | quote }}
+            - name: PGPASSWORD
+              value: {{ .Values.postgres.password | quote }}
 
-        command:
-          - sh
-          - -c
-          - |
-            echo "Waiting for PostgreSQL.."
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for PostgreSQL..."
 
-            until pg_isready -h "$PGHOST" -p "$PGPORT" -U "$PGUSER"; do
-              sleep 3
-            done
+              until pg_isready -h "$PGHOST" -p "$PGPORT" -U "$PGUSER"; do
+                sleep 3
+              done
 
-            echo "PostgreSQL is ready"
+              echo "PostgreSQL is ready"
 
-            echo "Running database migration..."
+              echo "Running database migration..."
 
-            psql -f /migration/init.sql
+              psql -f /migrations/init.sql
 
-            echo "Migration completed successfully"
+              echo "Migration completed successfully"
 
-        volumeMounts:
-          - name: migration-sql
-            mountPath: /migrations
+          volumeMounts:
+            - name: migration-sql
+              mountPath: /migrations
 
-    volumes:
-      - name: migration-sql
-        configMap:
-          name: postgres-init-sql
-
-
-
-
-
-
-          
+      volumes:
+        - name: migration-sql
+          configMap:
+            name: postgres-init-sql
